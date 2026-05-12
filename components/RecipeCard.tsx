@@ -1,10 +1,12 @@
 "use client";
 
-import { Star, MoreHorizontal } from "lucide-react";
+import { Star, MoreHorizontal, Trash2, Edit2 } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
+import { doc, deleteDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
-// Описуємо, які дані чекає картка
 export interface Recipe {
     id: string;
     title: string;
@@ -18,10 +20,28 @@ export interface Recipe {
 
 export default function RecipeCard({ recipe }: { recipe: Recipe }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { user } = useAuth();
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    const isOwner = user?.uid === recipe.userId;
+
+    const handleDelete = async () => {
+        if (!confirm("Are you sure you want to delete this recipe?")) return;
+
+        try {
+            setIsDeleting(true);
+            await deleteDoc(doc(db, "recipes", recipe.id));
+
+            window.location.reload();
+        } catch (error) {
+            console.error("Error deleting recipe:", error);
+            alert("Failed to delete recipe");
+            setIsDeleting(false);
+        }
+    };
 
     return (
-        <div className="bg-[#3A3633] rounded-2xl overflow-hidden flex flex-col border border-[#4a4542]">
-            {/* Картинка (тепер клікабельна) */}
+        <div className={`bg-[#3A3633] rounded-2xl overflow-hidden flex flex-col border border-[#4a4542] transition-opacity ${isDeleting ? 'opacity-50' : ''}`}>
             <Link href={`/recipes/${recipe.id}`} className="h-48 bg-gray-500 relative block cursor-pointer group overflow-hidden">
                 <img
                     src={recipe.image}
@@ -30,7 +50,6 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
                 />
             </Link>
 
-            {/* Контент */}
             <div className="p-5 flex flex-col flex-1">
                 <div className="flex justify-between items-start mb-2 gap-2">
                     <Link href={`/recipes/${recipe.id}`} className="text-white font-bold text-lg leading-tight hover:text-[#FCE07A] transition line-clamp-1">
@@ -47,30 +66,46 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
                 </p>
                 <span className="text-gray-500 text-xs font-medium mb-4">{recipe.category}</span>
 
-                <div className="mt-auto flex items-center justify-between">
+                <div className="mt-auto flex items-center justify-between relative">
                     <div className="flex gap-2">
                         <span className="bg-[#FCE07A] text-black text-xs font-bold px-3 py-1.5 rounded-lg">
                             {recipe.prepTime} mins
                         </span>
                     </div>
 
-                    <div className="relative">
-                        <button
-                            onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className="text-gray-400 hover:text-white p-1 border border-gray-500 rounded-lg transition"
-                        >
-                            <MoreHorizontal size={20} />
-                        </button>
+                    {isOwner && (
+                        <div>
+                            <button
+                                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                className="text-gray-400 hover:text-white p-1 border border-gray-500 rounded-lg transition"
+                            >
+                                <MoreHorizontal size={20} />
+                            </button>
 
-                        {isMenuOpen && (
-                            <div className="absolute right-0 bottom-full mb-2 w-28 bg-[#FCE07A] text-black rounded-lg shadow-lg overflow-hidden z-10">
-                                <button className="w-full text-left px-4 py-2 text-sm font-semibold hover:bg-yellow-400 transition">Edit</button>
-                                <button className="w-full text-left px-4 py-2 text-sm font-semibold hover:bg-yellow-400 transition">Delete</button>
-                            </div>
-                        )}
-                    </div>
+                            {isMenuOpen && (
+                                <div className="absolute right-0 bottom-full mb-2 w-32 bg-[#FCE07A] text-black rounded-xl shadow-lg overflow-hidden z-10 border border-yellow-500">
+                                    <button
+                                        onClick={() => {
+                                            setIsMenuOpen(false);
+                                            alert("Функція Edit буде на наступному кроці 😉");
+                                        }}
+                                        className="w-full text-left px-4 py-2.5 text-sm font-bold hover:bg-yellow-400 transition flex items-center gap-2 border-b border-yellow-500/30"
+                                    >
+                                        <Edit2 size={14} /> Edit
+                                    </button>
+                                    <button
+                                        onClick={handleDelete}
+                                        disabled={isDeleting}
+                                        className="w-full text-left px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50 transition flex items-center gap-2"
+                                    >
+                                        <Trash2 size={14} /> {isDeleting ? "Deleting..." : "Delete"}
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
     );
-} 
+}
