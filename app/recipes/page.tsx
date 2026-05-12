@@ -3,31 +3,29 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { useFilter } from "@/contexts/FilterContext";
 import RecipeCard, { Recipe } from "@/components/RecipeCard";
 import { ChevronDown, Loader2 } from "lucide-react";
-import { useFilter } from "@/contexts/FilterContext";
+
+const cuisines = ["Vegan", "Dessert", "Italian", "Breakfast", "Mexican", "Asian"];
+const difficulties = ["Easy", "Medium", "Hard"];
+const prepTimes = ["Under 15 mins", "15-30 mins", "30-60 mins", "Over 1 hr"];
 
 export default function RecipesPage() {
     const [recipes, setRecipes] = useState<Recipe[]>([]);
     const [loading, setLoading] = useState(true);
-    const { searchQuery, selectedCategories, prepTime } = useFilter();
 
-    const filteredRecipes = recipes.filter((recipe) => {
-        const searchMatch = searchQuery === "" ||
-            recipe.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            recipe.description.toLowerCase().includes(searchQuery.toLowerCase());
+    // Стани для верхніх дропдаунів
+    const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+    const [topDifficulty, setTopDifficulty] = useState("");
 
-        const categoryMatch = selectedCategories.length === 0 ||
-            selectedCategories.includes(recipe.category);
-
-        let timeMatch = true;
-        if (prepTime === "Under 15 mins") timeMatch = recipe.prepTime < 15;
-        else if (prepTime === "15-30 mins") timeMatch = recipe.prepTime >= 15 && recipe.prepTime <= 30;
-        else if (prepTime === "30-60 mins") timeMatch = recipe.prepTime > 30 && recipe.prepTime <= 60;
-        else if (prepTime === "Over 1 hr") timeMatch = recipe.prepTime > 60;
-
-        return searchMatch && categoryMatch && timeMatch;
-    });
+    const {
+        searchQuery,
+        selectedCategories,
+        toggleCategory,
+        prepTime,
+        setPrepTime
+    } = useFilter();
 
     useEffect(() => {
         const fetchRecipes = async () => {
@@ -51,24 +49,124 @@ export default function RecipesPage() {
         fetchRecipes();
     }, []);
 
+    const toggleDropdown = (name: string) => {
+        setOpenDropdown(openDropdown === name ? null : name);
+    };
+
+    // Фільтрація рецептів
+    const filteredRecipes = recipes.filter((recipe) => {
+        const searchMatch = searchQuery === "" ||
+            recipe.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            recipe.description.toLowerCase().includes(searchQuery.toLowerCase());
+
+        const categoryMatch = selectedCategories.length === 0 ||
+            selectedCategories.includes(recipe.category);
+
+        let timeMatch = true;
+        if (prepTime === "Under 15 mins") timeMatch = recipe.prepTime < 15;
+        else if (prepTime === "15-30 mins") timeMatch = recipe.prepTime >= 15 && recipe.prepTime <= 30;
+        else if (prepTime === "30-60 mins") timeMatch = recipe.prepTime > 30 && recipe.prepTime <= 60;
+        else if (prepTime === "Over 1 hr") timeMatch = recipe.prepTime > 60;
+
+        return searchMatch && categoryMatch && timeMatch;
+    });
+
     return (
         <div className="text-white">
+            {/* Верхня панель */}
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
                 <div>
                     <h1 className="text-2xl font-bold">All Recipes</h1>
                     <p className="text-gray-400 text-sm mt-1">{filteredRecipes.length} recipes found</p>
                 </div>
 
+                {/* Дропдауни (тепер робочі) */}
                 <div className="flex items-center gap-3">
-                    <button className="flex items-center gap-2 bg-[#3A3633] px-4 py-2 rounded-xl text-sm border border-[#4a4542] hover:bg-[#4a4542] transition">
-                        Cuisine <ChevronDown size={16} className="text-gray-400" />
-                    </button>
-                    <button className="flex items-center gap-2 bg-[#3A3633] px-4 py-2 rounded-xl text-sm border border-[#4a4542] hover:bg-[#4a4542] transition">
-                        Difficulty <ChevronDown size={16} className="text-gray-400" />
-                    </button>
-                    <button className="flex items-center gap-2 bg-[#3A3633] px-4 py-2 rounded-xl text-sm border border-[#4a4542] hover:bg-[#4a4542] transition">
-                        Prep Time <ChevronDown size={16} className="text-gray-400" />
-                    </button>
+
+                    {/* Cuisine Dropdown */}
+                    <div className="relative">
+                        <button
+                            onClick={() => toggleDropdown("cuisine")}
+                            className="flex items-center gap-2 bg-[#3A3633] px-4 py-2 rounded-xl text-sm border border-[#4a4542] hover:bg-[#4a4542] transition"
+                        >
+                            {selectedCategories.length === 1 ? selectedCategories[0] : "Cuisine"}
+                            <ChevronDown size={16} className={`text-gray-400 transition-transform ${openDropdown === "cuisine" ? "rotate-180" : ""}`} />
+                        </button>
+                        {openDropdown === "cuisine" && (
+                            <div className="absolute right-0 top-full mt-2 w-40 bg-[#3A3633] border border-[#4a4542] rounded-xl shadow-lg overflow-hidden z-20">
+                                {cuisines.map(c => (
+                                    <button
+                                        key={c}
+                                        onClick={() => { toggleCategory(c); setOpenDropdown(null); }}
+                                        className={`w-full text-left px-4 py-2.5 text-sm transition hover:bg-[#4a4542] ${selectedCategories.includes(c) ? "text-[#FCE07A] font-bold" : "text-gray-300"}`}
+                                    >
+                                        {c}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Difficulty Dropdown */}
+                    <div className="relative">
+                        <button
+                            onClick={() => toggleDropdown("difficulty")}
+                            className="flex items-center gap-2 bg-[#3A3633] px-4 py-2 rounded-xl text-sm border border-[#4a4542] hover:bg-[#4a4542] transition"
+                        >
+                            {topDifficulty || "Difficulty"}
+                            <ChevronDown size={16} className={`text-gray-400 transition-transform ${openDropdown === "difficulty" ? "rotate-180" : ""}`} />
+                        </button>
+                        {openDropdown === "difficulty" && (
+                            <div className="absolute right-0 top-full mt-2 w-40 bg-[#3A3633] border border-[#4a4542] rounded-xl shadow-lg overflow-hidden z-20">
+                                <button
+                                    onClick={() => { setTopDifficulty(""); setOpenDropdown(null); }}
+                                    className="w-full text-left px-4 py-2.5 text-sm text-gray-400 hover:bg-[#4a4542] transition"
+                                >
+                                    Any
+                                </button>
+                                {difficulties.map(d => (
+                                    <button
+                                        key={d}
+                                        onClick={() => { setTopDifficulty(d); setOpenDropdown(null); }}
+                                        className={`w-full text-left px-4 py-2.5 text-sm transition hover:bg-[#4a4542] ${topDifficulty === d ? "text-[#FCE07A] font-bold" : "text-gray-300"}`}
+                                    >
+                                        {d}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Prep Time Dropdown */}
+                    <div className="relative">
+                        <button
+                            onClick={() => toggleDropdown("prep")}
+                            className="flex items-center gap-2 bg-[#3A3633] px-4 py-2 rounded-xl text-sm border border-[#4a4542] hover:bg-[#4a4542] transition"
+                        >
+                            {prepTime ? prepTime.replace(" mins", "m").replace(" hr", "h") : "Prep Time"}
+                            <ChevronDown size={16} className={`text-gray-400 transition-transform ${openDropdown === "prep" ? "rotate-180" : ""}`} />
+                        </button>
+                        {openDropdown === "prep" && (
+                            <div className="absolute right-0 top-full mt-2 w-48 bg-[#3A3633] border border-[#4a4542] rounded-xl shadow-lg overflow-hidden z-20">
+                                <button
+                                    onClick={() => { setPrepTime(""); setOpenDropdown(null); }}
+                                    className="w-full text-left px-4 py-2.5 text-sm text-gray-400 hover:bg-[#4a4542] transition"
+                                >
+                                    Any Time
+                                </button>
+                                {prepTimes.map(t => (
+                                    <button
+                                        key={t}
+                                        onClick={() => { setPrepTime(t); setOpenDropdown(null); }}
+                                        className={`w-full text-left px-4 py-2.5 text-sm transition hover:bg-[#4a4542] ${prepTime === t ? "text-[#FCE07A] font-bold" : "text-gray-300"}`}
+                                    >
+                                        {t}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
                 </div>
             </div>
 
@@ -78,7 +176,7 @@ export default function RecipesPage() {
                 </div>
             ) : filteredRecipes.length === 0 ? (
                 <div className="text-center py-20 text-gray-500">
-                    No recipes found. Be the first to create one!
+                    No recipes found matching your filters.
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
