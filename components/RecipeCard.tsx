@@ -84,15 +84,20 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
 
                             {isMenuOpen && (
                                 <div className="absolute right-0 bottom-full mb-2 w-32 bg-[#FCE07A] text-black rounded-xl shadow-lg overflow-hidden z-10 border border-yellow-500">
-                                    <button
-                                        onClick={() => {
-                                            setIsMenuOpen(false);
-                                            alert("Функція Edit буде на наступному кроці 😉");
-                                        }}
-                                        className="w-full text-left px-4 py-2.5 text-sm font-bold hover:bg-yellow-400 transition flex items-center gap-2 border-b border-yellow-500/30"
+                                    <Link
+                                        href={`/recipes/edit/${recipe.id}`}
+
                                     >
-                                        <Edit2 size={14} /> Edit
-                                    </button>
+                                        <button
+                                            onClick={() => {
+                                                setIsMenuOpen(false);
+
+                                            }}
+                                            className="w-full text-left px-4 py-2.5 text-sm font-bold hover:bg-yellow-400 transition flex items-center gap-2 border-b border-yellow-500/30"
+                                        >
+                                            Edit
+                                        </button>
+                                    </Link>
                                     <button
                                         onClick={handleDelete}
                                         disabled={isDeleting}

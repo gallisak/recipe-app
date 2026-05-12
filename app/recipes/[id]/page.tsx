@@ -49,11 +49,11 @@ export default function RecipeDetailsPage({ params }: { params: Promise<{ id: st
 
     if (loading) {
         return (
-            <div className="text-white animate-pulse max-w-[850px] mx-auto py-10">
+            <div className="text-white animate-pulse max-w-212.5 mx-auto py-10">
                 <div className="h-8 w-24 bg-[#3A3633] rounded mb-8"></div>
                 <div className="h-4 w-32 bg-[#3A3633] rounded mb-4"></div>
                 <div className="h-12 w-3/4 bg-[#3A3633] rounded mb-4"></div>
-                <div className="h-[400px] w-full bg-[#3A3633] rounded mb-8"></div>
+                <div className="h-100 w-full bg-[#3A3633] rounded mb-8"></div>
             </div>
         );
     }
@@ -67,7 +67,7 @@ export default function RecipeDetailsPage({ params }: { params: Promise<{ id: st
         : "October 15, 2023"; // Дефолтна дата як на макеті, якщо немає реальної
 
     return (
-        <div className="text-[#D5D0C8] max-w-[850px] mx-auto pb-24 px-4 md:px-0">
+        <div className="text-[#D5D0C8] max-w-212.5 mx-auto pb-24 px-4 md:px-0">
 
             {/* Кнопка "Back" */}
             <div className="mb-8 pt-4">
@@ -95,7 +95,7 @@ export default function RecipeDetailsPage({ params }: { params: Promise<{ id: st
                 <img
                     src={recipe.image}
                     alt={recipe.title}
-                    className="w-full h-[300px] md:h-[450px] object-cover"
+                    className="w-full h-75 md:h-112.5 object-cover"
                 />
             </div>
             {/* Підпис під фото (як на макеті) */}
@@ -136,7 +136,7 @@ export default function RecipeDetailsPage({ params }: { params: Promise<{ id: st
                     {recipe.ingredients.map((item, idx) => (
                         <label key={idx} className="flex items-center gap-3 cursor-pointer group">
                             <div className="relative flex items-center justify-center shrink-0">
-                                <input type="checkbox" className="peer appearance-none w-[18px] h-[18px] border-[1.5px] border-gray-400 rounded-sm checked:bg-transparent checked:border-gray-400 cursor-pointer transition" />
+                                <input type="checkbox" className="peer appearance-none w-4.5 h-4.5 border-[1.5px] border-gray-400 rounded-sm checked:bg-transparent checked:border-gray-400 cursor-pointer transition" />
                                 <svg className="absolute w-3.5 h-3.5 text-gray-300 opacity-0 peer-checked:opacity-100 pointer-events-none" viewBox="0 0 20 20" fill="currentColor">
                                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                 </svg>
