@@ -11,7 +11,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Plus, Trash2, Link as LinkIcon, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-// Валідація: тепер замість файлу чекаємо на URL
 const recipeSchema = z.object({
     title: z.string().min(3, "Title must be at least 3 characters"),
     description: z.string().min(10, "Description is too short"),
@@ -53,7 +52,6 @@ export default function NewRecipePage() {
         try {
             setIsUploading(true);
 
-            // Прямий запис у Firestore (без Storage)
             await addDoc(collection(db, "recipes"), {
                 title: data.title,
                 description: data.description,
@@ -87,7 +85,6 @@ export default function NewRecipePage() {
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 bg-[#3A3633] p-8 rounded-2xl border border-[#4a4542]">
 
-                {/* Основна інфа */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="md:col-span-2">
                         <label className="block text-sm font-semibold mb-2 text-gray-300">Recipe Title</label>
@@ -117,7 +114,6 @@ export default function NewRecipePage() {
                     </div>
                 </div>
 
-                {/* Поле для URL картинки */}
                 <div>
                     <label className="block text-sm font-semibold mb-2 text-gray-300">Recipe Image URL</label>
                     <div className="relative">
@@ -133,7 +129,6 @@ export default function NewRecipePage() {
                     {errors.imageUrl && <span className="text-red-400 text-xs mt-1">{errors.imageUrl.message}</span>}
                 </div>
 
-                {/* Ingredients */}
                 <div>
                     <label className="block text-sm font-semibold mb-2 text-gray-300">Ingredients</label>
                     {ingFields.map((field, index) => (
@@ -153,7 +148,6 @@ export default function NewRecipePage() {
                     </button>
                 </div>
 
-                {/* Instructions */}
                 <div>
                     <label className="block text-sm font-semibold mb-2 text-gray-300">Instructions</label>
                     {instFields.map((field, index) => (

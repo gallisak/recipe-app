@@ -7,11 +7,21 @@ const categories = ["Vegan", "Dessert", "Italian", "Breakfast", "Mexican", "Asia
 const prepTimes = ["Under 15 mins", "15-30 mins", "30-60 mins", "Over 1 hr"];
 
 export default function Sidebar() {
-    const { selectedCategories, toggleCategory, prepTime, setPrepTime, showFavorites, setShowFavorites } = useFilter();
+    // Додав setSelectedCategories з твого контексту
+    const {
+        selectedCategories,
+        toggleCategory,
+        setSelectedCategories, // Переконайся, що ця функція є в FilterContext.tsx
+        prepTime,
+        setPrepTime,
+        showFavorites,
+        setShowFavorites
+    } = useFilter();
 
     return (
         <aside className="w-64 bg-[#262220] text-white p-8 border-r border-[#3E3A37] h-[calc(100vh-80px)] sticky top-20 overflow-y-auto">
             <div className="flex flex-col gap-10">
+                {/* Saved Recipes Toggle */}
                 <div>
                     <button
                         onClick={() => setShowFavorites(!showFavorites)}
@@ -21,8 +31,21 @@ export default function Sidebar() {
                         <span>Saved Recipes</span>
                     </button>
                 </div>
+
+                {/* Categories Filter */}
                 <div>
-                    <h3 className="font-semibold mb-5 text-[15px]">Filter by Category</h3>
+                    <div className="flex items-center justify-between mb-5">
+                        <h3 className="font-semibold text-[15px]">Filter by Category</h3>
+                        {/* Кнопка Clear з'являється, якщо вибрано хоча б одну категорію */}
+                        {selectedCategories.length > 0 && (
+                            <button
+                                onClick={() => setSelectedCategories([])}
+                                className="text-xs text-gray-500 hover:text-white transition"
+                            >
+                                Clear
+                            </button>
+                        )}
+                    </div>
                     <div className="flex flex-col gap-4">
                         {categories.map((cat) => (
                             <label key={cat} className="flex items-center gap-3 cursor-pointer group">
@@ -43,6 +66,7 @@ export default function Sidebar() {
                     </div>
                 </div>
 
+                {/* Prep Time Filter */}
                 <div>
                     <div className="flex items-center justify-between mb-5">
                         <h3 className="font-semibold text-[15px]">Filter by Prep Time</h3>

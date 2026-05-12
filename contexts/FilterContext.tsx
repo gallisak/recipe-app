@@ -1,26 +1,28 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, ReactNode } from "react";
 
 interface FilterContextType {
-    searchQuery: string;
-    setSearchQuery: (query: string) => void;
     selectedCategories: string[];
     toggleCategory: (category: string) => void;
+    setSelectedCategories: (categories: string[]) => void;
     prepTime: string;
     setPrepTime: (time: string) => void;
     showFavorites: boolean;
-    setShowFavorites: (val: boolean) => void;
+    setShowFavorites: (show: boolean) => void;
+    searchQuery: string;
+    setSearchQuery: (query: string) => void;
 }
 
 const FilterContext = createContext<FilterContextType | undefined>(undefined);
 
 export function FilterProvider({ children }: { children: ReactNode }) {
-    const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-    const [prepTime, setPrepTime] = useState("");
-    const [showFavorites, setShowFavorites] = useState(false);
+    const [prepTime, setPrepTime] = useState<string>("");
+    const [showFavorites, setShowFavorites] = useState<boolean>(false);
+    const [searchQuery, setSearchQuery] = useState<string>("");
 
+    // Функція для перемикання окремої категорії
     const toggleCategory = (category: string) => {
         setSelectedCategories((prev) =>
             prev.includes(category)
@@ -32,14 +34,15 @@ export function FilterProvider({ children }: { children: ReactNode }) {
     return (
         <FilterContext.Provider
             value={{
-                searchQuery,
-                setSearchQuery,
                 selectedCategories,
                 toggleCategory,
+                setSelectedCategories,
                 prepTime,
                 setPrepTime,
                 showFavorites,
                 setShowFavorites,
+                searchQuery,
+                setSearchQuery,
             }}
         >
             {children}
@@ -47,8 +50,10 @@ export function FilterProvider({ children }: { children: ReactNode }) {
     );
 }
 
-export const useFilter = () => {
+export function useFilter() {
     const context = useContext(FilterContext);
-    if (!context) throw new Error("useFilter must be used within a FilterProvider");
+    if (context === undefined) {
+        throw new Error("useFilter must be used within a FilterProvider");
+    }
     return context;
-};
+}
