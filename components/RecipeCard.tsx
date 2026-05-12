@@ -4,7 +4,7 @@ import { Star, MoreHorizontal, Trash2, Edit2, Heart } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
-import { doc, deleteDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { doc, deleteDoc, setDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 export interface Recipe {
@@ -47,9 +47,11 @@ export default function RecipeCard({ recipe, isFavorite }: { recipe: Recipe, isF
         const userRef = doc(db, "users", user.uid);
         try {
             if (isFavorite) {
-                await updateDoc(userRef, { favoriteRecipes: arrayRemove(recipe.id) });
+                // ДОДАНО { merge: true }
+                await setDoc(userRef, { favoriteRecipes: arrayRemove(recipe.id) }, { merge: true });
             } else {
-                await updateDoc(userRef, { favoriteRecipes: arrayUnion(recipe.id) });
+                // ДОДАНО { merge: true }
+                await setDoc(userRef, { favoriteRecipes: arrayUnion(recipe.id) }, { merge: true });
             }
         } catch (error) {
             console.error("Error toggling favorite:", error);
@@ -110,17 +112,10 @@ export default function RecipeCard({ recipe, isFavorite }: { recipe: Recipe, isF
                                 <div className="absolute right-0 bottom-full mb-2 w-32 bg-[#FCE07A] text-black rounded-xl shadow-lg overflow-hidden z-10 border border-yellow-500">
                                     <Link
                                         href={`/recipes/edit/${recipe.id}`}
-
+                                        onClick={() => setIsMenuOpen(false)}
+                                        className="w-full text-left px-4 py-2.5 text-sm font-bold hover:bg-yellow-400 transition flex items-center gap-2 border-b border-yellow-500/30"
                                     >
-                                        <button
-                                            onClick={() => {
-                                                setIsMenuOpen(false);
-
-                                            }}
-                                            className="w-full text-left px-4 py-2.5 text-sm font-bold hover:bg-yellow-400 transition flex items-center gap-2 border-b border-yellow-500/30"
-                                        >
-                                            Edit
-                                        </button>
+                                        <Edit2 size={14} /> Edit
                                     </Link>
                                     <button
                                         onClick={handleDelete}

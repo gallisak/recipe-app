@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { collection, getDocs, orderBy, query, onSnapshot, doc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useFilter } from "@/contexts/FilterContext";
 import RecipeCard, { Recipe } from "@/components/RecipeCard";
 import { ChevronDown, Loader2 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const cuisines = ["Vegan", "Dessert", "Italian", "Breakfast", "Mexican", "Asian"];
 const difficulties = ["Easy", "Medium", "Hard"];
@@ -15,18 +16,22 @@ export default function RecipesPage() {
     const [recipes, setRecipes] = useState<Recipe[]>([]);
     const [loading, setLoading] = useState(true);
 
-    // Стани для верхніх дропдаунів
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
     const [topDifficulty, setTopDifficulty] = useState("");
+
+    const { user } = useAuth();
+    const [userFavorites, setUserFavorites] = useState<string[]>([]);
 
     const {
         searchQuery,
         selectedCategories,
         toggleCategory,
         prepTime,
-        setPrepTime
+        setPrepTime,
+        showFavorites
     } = useFilter();
 
+    // Завантаження всіх рецептів
     useEffect(() => {
         const fetchRecipes = async () => {
             try {
@@ -49,12 +54,26 @@ export default function RecipesPage() {
         fetchRecipes();
     }, []);
 
+    // Слухач для улюблених рецептів юзера
+    useEffect(() => {
+        if (!user) return;
+        const unsub = onSnapshot(doc(db, "users", user.uid), (doc) => {
+            if (doc.exists()) {
+                setUserFavorites(doc.data()?.favoriteRecipes || []);
+            }
+        });
+        return () => unsub();
+    }, [user]);
+
     const toggleDropdown = (name: string) => {
         setOpenDropdown(openDropdown === name ? null : name);
     };
 
-    // Фільтрація рецептів
+    // Єдиний правильний блок фільтрації
     const filteredRecipes = recipes.filter((recipe) => {
+        // Якщо увімкнено фільтр Favorites, а рецепта немає в масиві — ховаємо
+        if (showFavorites && !userFavorites.includes(recipe.id)) return false;
+
         const searchMatch = searchQuery === "" ||
             recipe.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             recipe.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -181,7 +200,11 @@ export default function RecipesPage() {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {filteredRecipes.map((recipe) => (
-                        <RecipeCard key={recipe.id} recipe={recipe} />
+                        <RecipeCard
+                            isFavorite={userFavorites.includes(recipe.id)}
+                            key={recipe.id}
+                            recipe={recipe}
+                        />
                     ))}
                 </div>
             )}
