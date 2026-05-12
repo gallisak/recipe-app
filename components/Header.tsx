@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Search, Bell, Plus, ChevronDown } from "lucide-react";
 import logo from "../public/logo.png";
 import Image from "next/image";
+import { LogOut } from "lucide-react";
 
 export default function Header() {
     const { profile } = useAuth();
@@ -40,8 +41,7 @@ export default function Header() {
                 </button>
 
                 <div
-                    onClick={handleLogout}
-                    className="flex items-center gap-3 bg-[#3E3A37] px-3 py-1.5 rounded-full cursor-pointer hover:bg-[#4a4542] transition"
+                    className="flex items-center gap-3 bg-[#3E3A37] px-3 py-1.5 rounded-full hover:bg-[#4a4542] transition"
                     title="Click to Log Out"
                 >
                     <div className="w-8 h-8 rounded-full bg-gray-500 overflow-hidden flex items-center justify-center text-xs font-bold">
@@ -53,7 +53,7 @@ export default function Header() {
                         </span>
                         <span className="text-[10px] text-gray-400 leading-tight">Chef</span>
                     </div>
-                    <ChevronDown size={16} className="text-gray-400" />
+                    <LogOut className="cursor-pointer" onClick={handleLogout} width={18} />
                 </div>
 
                 <Link

@@ -34,16 +34,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             if (currentUser) {
                 const docRef = doc(db, "users", currentUser.uid);
                 const docSnap = await getDoc(docRef);
+
                 if (docSnap.exists()) {
+                    console.log("Profile found:", docSnap.data());
                     setProfile(docSnap.data() as UserProfile);
+                } else {
+                    console.warn("No profile document for UID:", currentUser.uid);
+                    setProfile({
+                        firstName: currentUser.displayName?.split(" ")[0] || "User",
+                        lastName: currentUser.displayName?.split(" ")[1] || "",
+                        email: currentUser.email || ""
+                    });
                 }
-            } else {
-                setProfile(null);
             }
             setLoading(false);
         });
-
-        return () => unsubscribe();
     }, []);
 
     return (
