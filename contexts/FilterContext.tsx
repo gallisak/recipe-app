@@ -9,6 +9,8 @@ interface FilterContextType {
     toggleCategory: (category: string) => void;
     prepTime: string;
     setPrepTime: (time: string) => void;
+    showFavorites: boolean;
+    setShowFavorites: (val: boolean) => void;
 }
 
 const FilterContext = createContext<FilterContextType | undefined>(undefined);
@@ -17,6 +19,7 @@ export function FilterProvider({ children }: { children: ReactNode }) {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [prepTime, setPrepTime] = useState("");
+    const [showFavorites, setShowFavorites] = useState(false);
 
     const toggleCategory = (category: string) => {
         setSelectedCategories((prev) =>
@@ -35,6 +38,8 @@ export function FilterProvider({ children }: { children: ReactNode }) {
                 toggleCategory,
                 prepTime,
                 setPrepTime,
+                showFavorites,
+                setShowFavorites,
             }}
         >
             {children}
@@ -44,8 +49,6 @@ export function FilterProvider({ children }: { children: ReactNode }) {
 
 export const useFilter = () => {
     const context = useContext(FilterContext);
-    if (!context) {
-        throw new Error("useFilter must be used within a FilterProvider");
-    }
+    if (!context) throw new Error("useFilter must be used within a FilterProvider");
     return context;
 };

@@ -1,17 +1,26 @@
 "use client";
 
 import { useFilter } from "@/contexts/FilterContext";
+import { Heart } from "lucide-react";
 
 const categories = ["Vegan", "Dessert", "Italian", "Breakfast", "Mexican", "Asian"];
 const prepTimes = ["Under 15 mins", "15-30 mins", "30-60 mins", "Over 1 hr"];
 
 export default function Sidebar() {
-    const { selectedCategories, toggleCategory, prepTime, setPrepTime } = useFilter();
+    const { selectedCategories, toggleCategory, prepTime, setPrepTime, showFavorites, setShowFavorites } = useFilter();
 
     return (
         <aside className="w-64 bg-[#262220] text-white p-8 border-r border-[#3E3A37] h-[calc(100vh-80px)] sticky top-20 overflow-y-auto">
             <div className="flex flex-col gap-10">
-
+                <div>
+                    <button
+                        onClick={() => setShowFavorites(!showFavorites)}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition ${showFavorites ? 'bg-[#FCE07A] text-black font-bold' : 'bg-[#3A3633] text-white hover:bg-[#4a4542]'}`}
+                    >
+                        <Heart size={20} className={showFavorites ? 'fill-black' : 'text-gray-400'} />
+                        <span>Saved Recipes</span>
+                    </button>
+                </div>
                 <div>
                     <h3 className="font-semibold mb-5 text-[15px]">Filter by Category</h3>
                     <div className="flex flex-col gap-4">

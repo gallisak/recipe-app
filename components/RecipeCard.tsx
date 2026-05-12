@@ -1,10 +1,10 @@
 "use client";
 
-import { Star, MoreHorizontal, Trash2, Edit2 } from "lucide-react";
+import { Star, MoreHorizontal, Trash2, Edit2, Heart } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
-import { doc, deleteDoc } from "firebase/firestore";
+import { doc, deleteDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 export interface Recipe {
@@ -18,7 +18,7 @@ export interface Recipe {
     userId: string;
 }
 
-export default function RecipeCard({ recipe }: { recipe: Recipe }) {
+export default function RecipeCard({ recipe, isFavorite }: { recipe: Recipe, isFavorite: boolean }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { user } = useAuth();
     const [isDeleting, setIsDeleting] = useState(false);
@@ -40,15 +40,39 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
         }
     };
 
+    const toggleFavorite = async (e: React.MouseEvent) => {
+        e.preventDefault();
+        if (!user) return alert("Please log in to save recipes!");
+
+        const userRef = doc(db, "users", user.uid);
+        try {
+            if (isFavorite) {
+                await updateDoc(userRef, { favoriteRecipes: arrayRemove(recipe.id) });
+            } else {
+                await updateDoc(userRef, { favoriteRecipes: arrayUnion(recipe.id) });
+            }
+        } catch (error) {
+            console.error("Error toggling favorite:", error);
+        }
+    };
+
     return (
         <div className={`bg-[#3A3633] rounded-2xl overflow-hidden flex flex-col border border-[#4a4542] transition-opacity ${isDeleting ? 'opacity-50' : ''}`}>
-            <Link href={`/recipes/${recipe.id}`} className="h-48 bg-gray-500 relative block cursor-pointer group overflow-hidden">
-                <img
-                    src={recipe.image}
-                    alt={recipe.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                />
-            </Link>
+            <div className="relative">
+                <Link href={`/recipes/${recipe.id}`} className="h-48 bg-gray-500 block cursor-pointer group overflow-hidden">
+                    <img
+                        src={recipe.image}
+                        alt={recipe.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                    />
+                </Link>
+                <button
+                    onClick={toggleFavorite}
+                    className="absolute top-3 right-3 p-2 bg-[#262220]/80 backdrop-blur-sm rounded-full hover:scale-110 transition z-10"
+                >
+                    <Heart size={18} className={isFavorite ? "fill-[#FCE07A] text-[#FCE07A]" : "text-white"} />
+                </button>
+            </div>
 
             <div className="p-5 flex flex-col flex-1">
                 <div className="flex justify-between items-start mb-2 gap-2">
