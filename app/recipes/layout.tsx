@@ -1,16 +1,19 @@
-import Header from "../../components/Header";
+import Header from "@/components/Header";
 import Sidebar from "../../components/SideBar";
+import { FilterProvider } from "@/contexts/FilterContext";
 
 export default function RecipesLayout({ children }: { children: React.ReactNode }) {
     return (
-        <div className="min-h-screen bg-[#2D2726]">
-            <Header />
-            <div className="flex">
-                <Sidebar />
-                <main className="flex-1 p-8">
-                    {children}
-                </main>
+        <FilterProvider>
+            <div className="min-h-screen bg-[#262220]">
+                <Header />
+                <div className="flex">
+                    <Sidebar />
+                    <main className="flex-1 p-8">
+                        {children}
+                    </main>
+                </div>
             </div>
-        </div>
+        </FilterProvider>
     );
 }

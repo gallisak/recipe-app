@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/contexts/AuthContext";
+import { useFilter } from "@/contexts/FilterContext";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
@@ -12,6 +13,7 @@ import { LogOut } from "lucide-react";
 
 export default function Header() {
     const { profile } = useAuth();
+    const { searchQuery, setSearchQuery } = useFilter();
     const router = useRouter();
 
     const handleLogout = async () => {
@@ -29,6 +31,8 @@ export default function Header() {
             <div className="flex-1 max-w-xl mx-8 relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                 <input
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     type="text"
                     placeholder="Search..."
                     className="w-full bg-[#3E3A37] text-white border-2 border-[#E6DDD633] rounded-xl py-2.5 pl-12 pr-4 outline-none focus:ring-1 focus:ring-[#FCE07A] transition"
