@@ -2,38 +2,56 @@
 
 import { Star, MoreHorizontal } from "lucide-react";
 import { useState } from "react";
+import Link from "next/link";
 
-export default function RecipeCard() {
+// Описуємо, які дані чекає картка
+export interface Recipe {
+    id: string;
+    title: string;
+    description: string;
+    category: string;
+    prepTime: number;
+    rating: number;
+    image: string;
+    userId: string;
+}
+
+export default function RecipeCard({ recipe }: { recipe: Recipe }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
-        <div className="bg-[#FFFFFF29] rounded-2xl overflow-hidden flex flex-col border border-[#E6D8D633]">
-            <div className="h-48 bg-gray-500 relative">
+        <div className="bg-[#3A3633] rounded-2xl overflow-hidden flex flex-col border border-[#4a4542]">
+            {/* Картинка (тепер клікабельна) */}
+            <Link href={`/recipes/${recipe.id}`} className="h-48 bg-gray-500 relative block cursor-pointer group overflow-hidden">
                 <img
-                    src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=1000&auto=format&fit=crop"
-                    alt="Cake"
-                    className="w-full h-full object-cover"
+                    src={recipe.image}
+                    alt={recipe.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                 />
-            </div>
+            </Link>
 
+            {/* Контент */}
             <div className="p-5 flex flex-col flex-1">
-                <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-white font-bold text-lg leading-tight">Tacos al Pastor</h3>
-                    <div className="flex items-center gap-1 text-[#FCE07A] text-sm font-semibold">
+                <div className="flex justify-between items-start mb-2 gap-2">
+                    <Link href={`/recipes/${recipe.id}`} className="text-white font-bold text-lg leading-tight hover:text-[#FCE07A] transition line-clamp-1">
+                        {recipe.title}
+                    </Link>
+                    <div className="flex items-center gap-1 text-[#FCE07A] text-sm font-semibold shrink-0">
                         <Star size={16} fill="currentColor" />
-                        <span>4.9</span>
+                        <span>{recipe.rating || "New"}</span>
                     </div>
                 </div>
 
                 <p className="text-gray-400 text-sm mb-2 line-clamp-2">
-                    Traditional Mexican tacos with pork.
+                    {recipe.description}
                 </p>
-                <span className="text-gray-500 text-xs font-medium mb-4">Mexican</span>
+                <span className="text-gray-500 text-xs font-medium mb-4">{recipe.category}</span>
 
                 <div className="mt-auto flex items-center justify-between">
                     <div className="flex gap-2">
-                        <span className="bg-[#FCE07A] text-black text-xs font-bold px-3 py-1.5 rounded-lg">1 hr</span>
-                        <span className="bg-[#FCE07A] text-black text-xs font-bold px-3 py-1.5 rounded-lg">1.5 hrs</span>
+                        <span className="bg-[#FCE07A] text-black text-xs font-bold px-3 py-1.5 rounded-lg">
+                            {recipe.prepTime} mins
+                        </span>
                     </div>
 
                     <div className="relative">
@@ -55,4 +73,4 @@ export default function RecipeCard() {
             </div>
         </div>
     );
-}
+} 
