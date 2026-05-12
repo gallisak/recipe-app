@@ -4,11 +4,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-import { auth, googleAuthProvider } from "@/lib/firebase";
+import { auth, googleAuthProvider, db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import logo from "../../../public/logo.png";
+import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 
 const signInSchema = z.object({
     email: z.string().email("Invalid email address"),
@@ -33,12 +34,30 @@ export default function SignIn() {
         }
     };
 
-    const handleGoogle = async () => {
+    const handleGoogleLogin = async () => {
         try {
-            await signInWithPopup(auth, googleAuthProvider);
+            const result = await signInWithPopup(auth, googleAuthProvider);
+            const user = result.user;
+
+            const userRef = doc(db, "users", user.uid);
+
+            const fullName = user.displayName || "Google User";
+            const nameParts = fullName.split(" ");
+            const fName = nameParts[0] || "Google";
+            const lName = nameParts.slice(1).join(" ") || "User";
+
+            // Виправлено: setDoc (латиницею) + додано merge: true
+            await setDoc(userRef, {
+                firstName: fName,
+                lastName: lName,
+                email: user.email,
+                lastLogin: serverTimestamp(),
+            }, { merge: true });
+
             router.push("/recipes");
         } catch (error) {
-            console.error(error);
+            console.error("Google Login Error:", error);
+            alert("Помилка при вході через Google");
         }
     };
 
@@ -48,6 +67,8 @@ export default function SignIn() {
                 <Image
                     src={logo}
                     alt="Recipe App Logo"
+                    width={40} // Додай розміри, якщо Image свариться
+                    height={40}
                 />
                 <span className="text-2xl ml-1 text-[#FFE478]">RecipeFinder</span>
             </div>
@@ -63,7 +84,7 @@ export default function SignIn() {
                     <input
                         {...register("email")}
                         placeholder="Email address"
-                        className="w-full mt-4 border border-[#6D6665] p-3 rounded-xl placeholder:text-[#8A8F93] text-white outline-none focus:border-[#FFE478]"
+                        className="w-full mt-2 border border-[#6D6665] bg-transparent p-3 rounded-xl placeholder:text-[#8A8F93] text-white outline-none focus:border-[#FFE478]"
                     />
                     {errors.email && <span className="text-red-500 text-sm mt-1">{errors.email.message}</span>}
                 </div>
@@ -74,19 +95,19 @@ export default function SignIn() {
                         type="password"
                         {...register("password")}
                         placeholder="Password"
-                        className="w-full mt-4 border border-[#6D6665] p-3 rounded-xl placeholder:text-[#8A8F93] text-white outline-none focus:border-[#FFE478]"
+                        className="w-full mt-2 border border-[#6D6665] bg-transparent p-3 rounded-xl placeholder:text-[#8A8F93] text-white outline-none focus:border-[#FFE478]"
                     />
                     {errors.password && <span className="text-red-500 text-sm mt-1">{errors.password.message}</span>}
                 </div>
 
                 <div className="flex justify-end">
-                    <Link href="#" className="md:text-lg text-[#FFE478]  font-medium">Forgot password?</Link>
+                    <Link href="#" className="text-[#FFE478] font-medium text-sm">Forgot password?</Link>
                 </div>
 
                 <button
                     disabled={isSubmitting}
                     type="submit"
-                    className="bg-[#FFE478] cursor-pointer text-black p-3 rounded-2xl hover:bg-[#FFE435] transition disabled:opacity-50 mt-2"
+                    className="bg-[#FFE478] cursor-pointer text-black p-3 rounded-2xl hover:bg-[#FFE435] transition disabled:opacity-50 mt-2 font-bold"
                 >
                     {isSubmitting ? "Signing in..." : "Sign In"}
                 </button>
@@ -98,10 +119,13 @@ export default function SignIn() {
                 <hr className="flex-1 border-[#635B57]" />
             </div>
 
+            {/* Виправлено: onClick викликає handleGoogleLogin */}
             <button
-                onClick={handleGoogle}
+                type="button"
+                onClick={handleGoogleLogin}
                 className="w-full border cursor-pointer border-[#6D6665] text-[#FFFFFF99] p-3 rounded-2xl flex justify-center items-center gap-2 hover:bg-gray-900 transition"
-            ><svg className="w-5 h-5" viewBox="0 0 24 24">
+            >
+                <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                     <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
                     <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
@@ -110,8 +134,8 @@ export default function SignIn() {
                 Sign in with Google
             </button>
 
-            <p className="text-center text-lg text-white">
-                Don't have an account yet ? <span className="text-[#FFE478]"><Link href="/auth/signup">Sign up</Link></span>
+            <p className="text-center text-white">
+                Don't have an account yet? <Link href="/auth/signup" className="text-[#FFE478] hover:underline">Sign up</Link>
             </p>
         </div>
     );

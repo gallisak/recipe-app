@@ -6,7 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db, storage } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 import { Plus, Trash2, Upload, ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -51,7 +52,13 @@ export default function NewRecipePage() {
 
         try {
             setIsUploading(true);
-            const imageUrl = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop";
+
+            const fileExtension = imageFile.name.split('.').pop();
+            const safeFilename = `recipe_${Date.now()}.${fileExtension}`;
+            const imageRef = ref(storage, `recipes/${safeFilename}`);
+
+            const snapshot = await uploadBytes(imageRef, imageFile);
+            const imageUrl = await getDownloadURL(snapshot.ref);
 
             await addDoc(collection(db, "recipes"), {
                 title: data.title,
@@ -173,7 +180,6 @@ export default function NewRecipePage() {
                     </button>
                 </div>
 
-                {/* Submit */}
                 <div className="pt-4 border-t border-[#4a4542] flex justify-end">
                     <button disabled={isUploading} type="submit" className="bg-[#FCE07A] text-black font-bold px-8 py-3 rounded-xl hover:bg-yellow-400 transition disabled:opacity-50">
                         {isUploading ? "Publishing..." : "Publish Recipe"}
