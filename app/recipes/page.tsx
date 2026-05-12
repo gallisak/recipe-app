@@ -25,13 +25,13 @@ export default function RecipesPage() {
     const {
         searchQuery,
         selectedCategories,
+        setSelectedCategories,
         toggleCategory,
         prepTime,
         setPrepTime,
         showFavorites
     } = useFilter();
 
-    // Завантаження всіх рецептів
     useEffect(() => {
         const fetchRecipes = async () => {
             try {
@@ -54,7 +54,6 @@ export default function RecipesPage() {
         fetchRecipes();
     }, []);
 
-    // Слухач для улюблених рецептів юзера
     useEffect(() => {
         if (!user) return;
         const unsub = onSnapshot(doc(db, "users", user.uid), (doc) => {
@@ -69,9 +68,7 @@ export default function RecipesPage() {
         setOpenDropdown(openDropdown === name ? null : name);
     };
 
-    // Єдиний правильний блок фільтрації
     const filteredRecipes = recipes.filter((recipe) => {
-        // Якщо увімкнено фільтр Favorites, а рецепта немає в масиві — ховаємо
         if (showFavorites && !userFavorites.includes(recipe.id)) return false;
 
         const searchMatch = searchQuery === "" ||
@@ -92,27 +89,31 @@ export default function RecipesPage() {
 
     return (
         <div className="text-white">
-            {/* Верхня панель */}
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
                 <div>
                     <h1 className="text-2xl font-bold">All Recipes</h1>
                     <p className="text-gray-400 text-sm mt-1">{filteredRecipes.length} recipes found</p>
                 </div>
 
-                {/* Дропдауни (тепер робочі) */}
                 <div className="flex items-center gap-3">
 
-                    {/* Cuisine Dropdown */}
                     <div className="relative">
                         <button
                             onClick={() => toggleDropdown("cuisine")}
                             className="flex items-center gap-2 bg-[#3A3633] px-4 py-2 rounded-xl text-sm border border-[#4a4542] hover:bg-[#4a4542] transition"
                         >
-                            {selectedCategories.length === 1 ? selectedCategories[0] : "Cuisine"}
+                            {selectedCategories.length === 0 ? "Cuisine" : selectedCategories.length === 1 ? selectedCategories[0] : `Cuisines (${selectedCategories.length})`}
                             <ChevronDown size={16} className={`text-gray-400 transition-transform ${openDropdown === "cuisine" ? "rotate-180" : ""}`} />
                         </button>
                         {openDropdown === "cuisine" && (
                             <div className="absolute right-0 top-full mt-2 w-40 bg-[#3A3633] border border-[#4a4542] rounded-xl shadow-lg overflow-hidden z-20">
+                                <button
+                                    onClick={() => { setSelectedCategories([]); setOpenDropdown(null); }}
+                                    className={`w-full text-left px-4 py-2.5 text-sm transition hover:bg-[#4a4542] ${selectedCategories.length === 0 ? "text-[#FCE07A] font-bold" : "text-gray-300"}`}
+                                >
+                                    Any Cuisine
+                                </button>
+                                <hr className="border-[#4a4542] mx-2" />
                                 {cuisines.map(c => (
                                     <button
                                         key={c}
@@ -126,7 +127,6 @@ export default function RecipesPage() {
                         )}
                     </div>
 
-                    {/* Difficulty Dropdown */}
                     <div className="relative">
                         <button
                             onClick={() => toggleDropdown("difficulty")}
@@ -139,7 +139,7 @@ export default function RecipesPage() {
                             <div className="absolute right-0 top-full mt-2 w-40 bg-[#3A3633] border border-[#4a4542] rounded-xl shadow-lg overflow-hidden z-20">
                                 <button
                                     onClick={() => { setTopDifficulty(""); setOpenDropdown(null); }}
-                                    className="w-full text-left px-4 py-2.5 text-sm text-gray-400 hover:bg-[#4a4542] transition"
+                                    className={`w-full text-left px-4 py-2.5 text-sm transition hover:bg-[#4a4542] ${topDifficulty === "" ? "text-[#FCE07A] font-bold" : "text-gray-400"}`}
                                 >
                                     Any
                                 </button>
@@ -156,7 +156,6 @@ export default function RecipesPage() {
                         )}
                     </div>
 
-                    {/* Prep Time Dropdown */}
                     <div className="relative">
                         <button
                             onClick={() => toggleDropdown("prep")}
@@ -169,10 +168,11 @@ export default function RecipesPage() {
                             <div className="absolute right-0 top-full mt-2 w-48 bg-[#3A3633] border border-[#4a4542] rounded-xl shadow-lg overflow-hidden z-20">
                                 <button
                                     onClick={() => { setPrepTime(""); setOpenDropdown(null); }}
-                                    className="w-full text-left px-4 py-2.5 text-sm text-gray-400 hover:bg-[#4a4542] transition"
+                                    className={`w-full text-left px-4 py-2.5 text-sm transition hover:bg-[#4a4542] ${prepTime === "" ? "text-[#FCE07A] font-bold" : "text-gray-400"}`}
                                 >
                                     Any Time
                                 </button>
+                                <hr className="border-[#4a4542] mx-2" />
                                 {prepTimes.map(t => (
                                     <button
                                         key={t}
