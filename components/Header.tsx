@@ -20,13 +20,11 @@ export default function Header() {
 
     return (
         <header className="h-20 bg-[#2D2726] text-white flex items-center justify-between px-8 border-b border-[#3E3A37] sticky top-0 z-50">
-            {/* Logo */}
             <Link href="/recipes" className="flex items-center gap-2 text-xl font-bold">
                 <Image src={logo} alt="Logo" />
                 Recipe<span className="text-[#FCE07A]">Finder</span>
             </Link>
 
-            {/* Search Bar */}
             <div className="flex-1 max-w-xl mx-8 relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                 <input
@@ -36,13 +34,11 @@ export default function Header() {
                 />
             </div>
 
-            {/* Actions */}
             <div className="flex items-center gap-6">
                 <button className="text-gray-400 hover:text-white transition">
                     <Bell size={22} />
                 </button>
 
-                {/* User Profile */}
                 <div
                     onClick={handleLogout}
                     className="flex items-center gap-3 bg-[#3E3A37] px-3 py-1.5 rounded-full cursor-pointer hover:bg-[#4a4542] transition"
@@ -60,7 +56,6 @@ export default function Header() {
                     <ChevronDown size={16} className="text-gray-400" />
                 </div>
 
-                {/* New Post Button */}
                 <Link
                     href="/recipes/new"
                     className="flex items-center gap-2 bg-[#FCE07A] text-black px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-yellow-300 transition"
