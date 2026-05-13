@@ -7,11 +7,11 @@ const categories = ["Vegan", "Dessert", "Italian", "Breakfast", "Mexican", "Asia
 const prepTimes = ["Under 15 mins", "15-30 mins", "30-60 mins", "Over 1 hr"];
 
 export default function Sidebar() {
-    // Додав setSelectedCategories з твого контексту
+
     const {
         selectedCategories,
         toggleCategory,
-        setSelectedCategories, // Переконайся, що ця функція є в FilterContext.tsx
+        setSelectedCategories,
         prepTime,
         setPrepTime,
         showFavorites,
@@ -19,9 +19,9 @@ export default function Sidebar() {
     } = useFilter();
 
     return (
-        <aside className="w-64 bg-[#262220] text-white p-8 border-r border-[#3E3A37] h-[calc(100vh-80px)] sticky top-20 overflow-y-auto">
+        <aside className="w-64 bg-[#262220] text-white p-8 border-r border-[#3E3A37] h-[calc(100vh-80px)] sticky top-20 overflow-y-auto hidden lg:block">
             <div className="flex flex-col gap-10">
-                {/* Saved Recipes Toggle */}
+
                 <div>
                     <button
                         onClick={() => setShowFavorites(!showFavorites)}
@@ -32,11 +32,9 @@ export default function Sidebar() {
                     </button>
                 </div>
 
-                {/* Categories Filter */}
                 <div>
                     <div className="flex items-center justify-between mb-5">
                         <h3 className="font-semibold text-[15px]">Filter by Category</h3>
-                        {/* Кнопка Clear з'являється, якщо вибрано хоча б одну категорію */}
                         {selectedCategories.length > 0 && (
                             <button
                                 onClick={() => setSelectedCategories([])}
@@ -66,7 +64,6 @@ export default function Sidebar() {
                     </div>
                 </div>
 
-                {/* Prep Time Filter */}
                 <div>
                     <div className="flex items-center justify-between mb-5">
                         <h3 className="font-semibold text-[15px]">Filter by Prep Time</h3>
