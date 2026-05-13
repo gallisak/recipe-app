@@ -5,7 +5,8 @@ import { collection, getDocs, orderBy, query, onSnapshot, doc } from "firebase/f
 import { db } from "@/lib/firebase";
 import { useFilter } from "@/contexts/FilterContext";
 import RecipeCard, { Recipe } from "@/components/RecipeCard";
-import { ChevronDown, Loader2 } from "lucide-react";
+import RecipeCardSkeleton from "@/components/ui/RecipeCardSkeleton";
+import { ChevronDown } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 import Button from "@/components/ui/Button";
@@ -94,7 +95,9 @@ export default function RecipesPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
                 <div>
                     <h1 className="text-2xl font-bold">All Recipes</h1>
-                    <p className="text-gray-400 text-sm mt-1">{filteredRecipes.length} recipes found</p>
+                    <p className="text-gray-400 text-sm mt-1">
+                        {loading ? "Searching..." : `${filteredRecipes.length} recipes found`}
+                    </p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2 md:gap-3">
@@ -195,13 +198,19 @@ export default function RecipesPage() {
             </div>
 
             {loading ? (
-                <div className="flex justify-center items-center py-20">
-                    <Loader2 className="animate-spin text-[#FCE07A]" size={40} />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {[...Array(8)].map((_, i) => (
+                        <RecipeCardSkeleton key={i} />
+                    ))}
                 </div>
             ) : filteredRecipes.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-20 bg-[#3A3633]/30 rounded-2xl border border-dashed border-[#4a4542]">
                     <p className="text-gray-500 mb-4">No recipes found matching your filters.</p>
-                    <Button variant="ghost" size="sm" onClick={() => { setSelectedCategories([]); setPrepTime(""); setTopDifficulty(""); }}>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => { setSelectedCategories([]); setPrepTime(""); setTopDifficulty(""); }}
+                    >
                         Clear all filters
                     </Button>
                 </div>
