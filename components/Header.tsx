@@ -10,6 +10,7 @@ import Link from "next/link";
 import { Search, Bell, Plus, LogOut, Menu, X } from "lucide-react";
 import logo from "../public/logo.svg";
 import Image from "next/image";
+import Button from "./ui/Button";
 
 export default function Header() {
     const { profile } = useAuth();
@@ -92,13 +93,9 @@ export default function Header() {
                     </div>
 
                     <nav className="flex flex-col gap-4">
-                        <Link
-                            href="/recipes/new"
-                            onClick={() => setIsMenuOpen(false)}
-                            className="flex items-center justify-center gap-3 bg-[#FCE07A] text-black p-4 rounded-xl font-bold"
-                        >
-                            <Plus size={20} /> Create New Post
-                        </Link>
+                        <Button href="/recipes/new" icon={<Plus size={18} />}>
+                            <span className="hidden lg:inline">New post</span>
+                        </Button>
 
                         <div className="bg-[#3E3A37] p-4 rounded-xl flex items-center justify-between">
                             <div className="flex items-center gap-3">

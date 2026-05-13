@@ -18,14 +18,14 @@ export default function IconButton({
 }: IconButtonProps) {
 
     const variants = {
-        default: active ? "text-[#FCE07A] bg-[#FCE07A]/10" : "text-gray-400 hover:text-white bg-transparent",
+        default: active ? "text-[#FCE07A] bg-[#FCE07A]/10" : "text-gray-400 hover:text-white bg-taupe-800",
         danger: "text-red-400 hover:bg-red-500/10",
         success: "text-green-400 hover:bg-green-500/10",
     };
 
     return (
         <button
-            className={`p-2 rounded-full transition-all duration-200 active:scale-125 ${variants[variant]} ${className}`}
+            className={`p-2 absolute top-3 right-3 bg-taupe-800 rounded-full transition-all duration-200 active:scale-125 ${variants[variant]} ${className}`}
             {...props}
         >
             {icon}

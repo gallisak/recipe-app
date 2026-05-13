@@ -5,6 +5,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import Button from "@/components/ui/Button";
 
 interface FullRecipe {
     id: string;
@@ -70,10 +71,9 @@ export default function RecipeDetailsPage({ params }: { params: Promise<{ id: st
         <div className="text-[#D5D0C8] max-w-212.5 mx-auto pb-24 px-4 sm:px-6 lg:px-0 overflow-x-hidden">
 
             <div className="mb-6 md:mb-8 pt-4">
-                <Link href="/recipes" className="inline-flex items-center gap-1.5 bg-[#FCE07A] text-black px-4 py-1.5 rounded-lg text-sm font-bold hover:bg-yellow-400 transition">
-                    <ArrowLeft size={16} strokeWidth={2.5} />
-                    <span>Back</span>
-                </Link>
+                <Button variant="secondary" size="sm" href="/recipes" icon={<ArrowLeft size={16} />}>
+                    Back
+                </Button>
             </div>
 
             <p className="text-[#FCE07A] text-[10px] md:text-xs font-bold mb-3 uppercase tracking-wider">

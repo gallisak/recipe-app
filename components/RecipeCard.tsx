@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import { doc, deleteDoc, setDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import IconButton from "./ui/IconButton";
 
 export interface Recipe {
     id: string;
@@ -50,10 +51,8 @@ export default function RecipeCard({ recipe, isFavorite }: { recipe: Recipe, isF
         const userRef = doc(db, "users", user.uid);
         try {
             if (isFavorite) {
-                // ДОДАНО { merge: true }
                 await setDoc(userRef, { favoriteRecipes: arrayRemove(recipe.id) }, { merge: true });
             } else {
-                // ДОДАНО { merge: true }
                 await setDoc(userRef, { favoriteRecipes: arrayUnion(recipe.id) }, { merge: true });
             }
         } catch (error) {
@@ -71,12 +70,11 @@ export default function RecipeCard({ recipe, isFavorite }: { recipe: Recipe, isF
                         className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                     />
                 </Link>
-                <button
+                <IconButton
+                    icon={<Heart size={20} fill={isFavorite ? "currentColor" : "none"} />}
+                    active={isFavorite}
                     onClick={toggleFavorite}
-                    className="absolute top-3 right-3 p-2 bg-[#262220]/80 backdrop-blur-sm rounded-full hover:scale-110 transition z-10"
-                >
-                    <Heart size={18} className={isFavorite ? "fill-[#FCE07A] text-[#FCE07A]" : "text-white"} />
-                </button>
+                />
             </div>
 
             <div className="p-5 flex flex-col flex-1">
