@@ -13,7 +13,7 @@ import Image from "next/image";
 import Button from "./ui/Button";
 
 export default function Header() {
-    const { profile } = useAuth();
+    const { user, profile } = useAuth();
     const { searchQuery, setSearchQuery } = useFilter();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const router = useRouter();
@@ -45,30 +45,43 @@ export default function Header() {
                 </div>
 
                 <div className="flex items-center gap-3 md:gap-6">
-                    <button className="text-gray-400 hover:text-white transition hidden sm:block">
-                        <Bell size={22} />
-                    </button>
+                    {user ? (
+                        <>
+                            <button className="text-gray-400 hover:text-white transition hidden sm:block">
+                                <Bell size={22} />
+                            </button>
 
-                    <div className="hidden sm:flex items-center gap-3 bg-[#3E3A37] px-3 py-1.5 rounded-full hover:bg-[#4a4542] transition">
-                        <div className="w-8 h-8 rounded-full bg-gray-500 overflow-hidden flex items-center justify-center text-xs font-bold">
-                            {profile?.firstName?.charAt(0) || "U"}
-                        </div>
-                        <div className="hidden lg:flex flex-col text-sm">
-                            <span className="font-medium text-white leading-tight">
-                                {profile ? `${profile.firstName} ${profile.lastName}` : "User"}
-                            </span>
-                            <span className="text-[10px] text-gray-400 leading-tight">Chef</span>
-                        </div>
-                        <LogOut className="cursor-pointer ml-1" onClick={handleLogout} width={18} />
-                    </div>
+                            <div className="hidden sm:flex items-center gap-3 bg-[#3E3A37] px-3 py-1.5 rounded-full hover:bg-[#4a4542] transition">
+                                <div className="w-8 h-8 rounded-full bg-gray-500 overflow-hidden flex items-center justify-center text-xs font-bold">
+                                    {profile?.firstName?.charAt(0) || "U"}
+                                </div>
+                                <div className="hidden lg:flex flex-col text-sm">
+                                    <span className="font-medium text-white leading-tight">
+                                        {profile ? `${profile.firstName} ${profile.lastName}` : "User"}
+                                    </span>
+                                    <span className="text-[10px] text-gray-400 leading-tight">Chef</span>
+                                </div>
+                                <LogOut className="cursor-pointer ml-1 text-gray-400 hover:text-red-400 transition" onClick={handleLogout} width={18} />
+                            </div>
 
-                    <Link
-                        href="/recipes/new"
-                        className="hidden sm:flex items-center gap-2 bg-[#FCE07A] text-black px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-yellow-300 transition"
-                    >
-                        <Plus size={18} />
-                        <span className="hidden lg:flex">New post</span>
-                    </Link>
+                            <Button
+                                href="/recipes/new"
+                                icon={<Plus size={18} />}
+                                className="hidden sm:flex"
+                            >
+                                <span className="hidden lg:flex">New post</span>
+                            </Button>
+                        </>
+                    ) : (
+                        <div className="hidden sm:flex items-center gap-3">
+                            <Button href="/auth/signin" variant="ghost" size="sm">
+                                Sign In
+                            </Button>
+                            <Button href="/auth/signup" variant="primary" size="sm">
+                                Sign Up
+                            </Button>
+                        </div>
+                    )}
 
                     <button
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -93,26 +106,39 @@ export default function Header() {
                     </div>
 
                     <nav className="flex flex-col gap-4">
-                        <Button href="/recipes/new" icon={<Plus size={18} />}>
-                            <span className="hidden lg:inline">New post</span>
-                        </Button>
+                        {user ? (
+                            <>
+                                <Button href="/recipes/new" icon={<Plus size={18} />} onClick={() => setIsMenuOpen(false)}>
+                                    New post
+                                </Button>
 
-                        <div className="bg-[#3E3A37] p-4 rounded-xl flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-gray-500 flex items-center justify-center font-bold">
-                                    {profile?.firstName?.charAt(0) || "U"}
+                                <div className="bg-[#3E3A37] p-4 rounded-xl flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-full bg-gray-500 flex items-center justify-center font-bold">
+                                            {profile?.firstName?.charAt(0) || "U"}
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="font-medium text-white">
+                                                {profile ? `${profile.firstName} ${profile.lastName}` : "User"}
+                                            </span>
+                                            <span className="text-xs text-gray-400">Chef</span>
+                                        </div>
+                                    </div>
+                                    <button onClick={handleLogout} className="text-red-400 p-2 hover:bg-red-500/10 rounded-lg transition">
+                                        <LogOut size={22} />
+                                    </button>
                                 </div>
-                                <div className="flex flex-col">
-                                    <span className="font-medium text-white">
-                                        {profile ? `${profile.firstName} ${profile.lastName}` : "User"}
-                                    </span>
-                                    <span className="text-xs text-gray-400">Chef</span>
-                                </div>
+                            </>
+                        ) : (
+                            <div className="flex flex-col gap-3">
+                                <Button href="/auth/signin" variant="secondary" onClick={() => setIsMenuOpen(false)}>
+                                    Sign In
+                                </Button>
+                                <Button href="/auth/signup" variant="primary" onClick={() => setIsMenuOpen(false)}>
+                                    Sign Up
+                                </Button>
                             </div>
-                            <button onClick={handleLogout} className="text-red-400 p-2">
-                                <LogOut size={22} />
-                            </button>
-                        </div>
+                        )}
                     </nav>
                 </div>
             )}
