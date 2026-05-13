@@ -2,12 +2,12 @@
 
 import { useFilter } from "@/contexts/FilterContext";
 import { Heart } from "lucide-react";
+import Button from "@/components/ui/Button";
 
 const categories = ["Vegan", "Dessert", "Italian", "Breakfast", "Mexican", "Asian"];
 const prepTimes = ["Under 15 mins", "15-30 mins", "30-60 mins", "Over 1 hr"];
 
 export default function Sidebar() {
-
     const {
         selectedCategories,
         toggleCategory,
@@ -23,25 +23,28 @@ export default function Sidebar() {
             <div className="flex flex-col gap-10">
 
                 <div>
-                    <button
+                    <Button
+                        variant={showFavorites ? "primary" : "secondary"}
                         onClick={() => setShowFavorites(!showFavorites)}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition ${showFavorites ? 'bg-[#FCE07A] text-black font-bold' : 'bg-[#3A3633] text-white hover:bg-[#4a4542]'}`}
+                        className="w-full justify-start"
+                        icon={<Heart size={20} className={showFavorites ? 'fill-black' : 'text-gray-400'} />}
                     >
-                        <Heart size={20} className={showFavorites ? 'fill-black' : 'text-gray-400'} />
-                        <span>Saved Recipes</span>
-                    </button>
+                        Saved Recipes
+                    </Button>
                 </div>
 
                 <div>
                     <div className="flex items-center justify-between mb-5">
                         <h3 className="font-semibold text-[15px]">Filter by Category</h3>
                         {selectedCategories.length > 0 && (
-                            <button
+                            <Button
+                                variant="ghost"
+                                size="sm"
                                 onClick={() => setSelectedCategories([])}
-                                className="text-xs text-gray-500 hover:text-white transition"
+                                className="h-auto p-0 font-normal text-xs text-gray-500 hover:bg-transparent"
                             >
                                 Clear
-                            </button>
+                            </Button>
                         )}
                     </div>
                     <div className="flex flex-col gap-4">
@@ -68,7 +71,14 @@ export default function Sidebar() {
                     <div className="flex items-center justify-between mb-5">
                         <h3 className="font-semibold text-[15px]">Filter by Prep Time</h3>
                         {prepTime && (
-                            <button onClick={() => setPrepTime("")} className="text-xs text-gray-500 hover:text-white transition">Clear</button>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setPrepTime("")}
+                                className="h-auto p-0 font-normal text-xs text-gray-500 hover:bg-transparent"
+                            >
+                                Clear
+                            </Button>
                         )}
                     </div>
                     <div className="flex flex-col gap-4">
