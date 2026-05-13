@@ -7,9 +7,8 @@ import logo from "../public/logo.svg";
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#262220] text-white flex flex-col items-center justify-center px-4 overflow-hidden">
-      {/* Фоновий декор (опціонально) */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#FCE07A] opacity-5 blur-[120px] rounded-full"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#FCE07A] opacity-5 blur-[120px] rounded-full"></div>
+      <div className="absolute bottom-0 right-0 w-[50%] h-[50%] bg-[#FCE07A] opacity-5 blur-[120px] rounded-full"></div>
 
       <div className="relative z-10 flex flex-col items-center text-center max-w-2xl">
         <Image

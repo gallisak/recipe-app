@@ -25,6 +25,9 @@ export default function RecipeCard({ recipe, isFavorite }: { recipe: Recipe, isF
 
     const isOwner = user?.uid === recipe.userId;
 
+
+
+
     const handleDelete = async () => {
         if (!confirm("Are you sure you want to delete this recipe?")) return;
 
