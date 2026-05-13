@@ -107,7 +107,7 @@ export default function RecipesPage() {
                             <ChevronDown size={14} className={`text-gray-400 shrink-0 transition-transform ${openDropdown === "cuisine" ? "rotate-180" : ""}`} />
                         </button>
                         {openDropdown === "cuisine" && (
-                            <div className="absolute left-0 md:right-0 top-full mt-2 w-40 bg-[#3A3633] border border-[#4a4542] rounded-xl shadow-lg overflow-hidden z-20">
+                            <div className="absolute left-0 md:right-0 top-full mt-2 w-40 bg-[#3A3633] border border-[#4a4542] rounded-xl shadow-2xl overflow-hidden z-20">
                                 <button
                                     onClick={() => { setSelectedCategories([]); setOpenDropdown(null); }}
                                     className={`w-full text-left px-4 py-2.5 text-sm transition hover:bg-[#4a4542] ${selectedCategories.length === 0 ? "text-[#FCE07A] font-bold" : "text-gray-300"}`}

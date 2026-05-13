@@ -49,7 +49,7 @@ export default function RecipeDetailsPage({ params }: { params: Promise<{ id: st
 
     if (loading) {
         return (
-            <div className="text-white animate-pulse max-w-[850px] mx-auto py-10 px-4">
+            <div className="text-white animate-pulse max-w-212.5 mx-auto py-10 px-4">
                 <div className="h-8 w-24 bg-[#3A3633] rounded mb-8"></div>
                 <div className="h-4 w-32 bg-[#3A3633] rounded mb-4"></div>
                 <div className="h-10 w-3/4 bg-[#3A3633] rounded mb-4"></div>
@@ -67,9 +67,8 @@ export default function RecipeDetailsPage({ params }: { params: Promise<{ id: st
         : "October 15, 2023";
 
     return (
-        <div className="text-[#D5D0C8] max-w-[850px] mx-auto pb-24 px-4 sm:px-6 lg:px-0 overflow-x-hidden">
+        <div className="text-[#D5D0C8] max-w-212.5 mx-auto pb-24 px-4 sm:px-6 lg:px-0 overflow-x-hidden">
 
-            {/* Back Button */}
             <div className="mb-6 md:mb-8 pt-4">
                 <Link href="/recipes" className="inline-flex items-center gap-1.5 bg-[#FCE07A] text-black px-4 py-1.5 rounded-lg text-sm font-bold hover:bg-yellow-400 transition">
                     <ArrowLeft size={16} strokeWidth={2.5} />
@@ -81,27 +80,25 @@ export default function RecipeDetailsPage({ params }: { params: Promise<{ id: st
                 {recipe.category || "General"}
             </p>
 
-            <h1 className="text-2xl md:text-5xl font-serif font-medium text-white mb-4 tracking-wide leading-tight break-words">
+            <h1 className="text-2xl md:text-5xl font-serif font-medium text-white mb-4 tracking-wide leading-tight wrap-break-words">
                 {recipe.title}
             </h1>
 
-            <p className="text-gray-300 text-sm md:text-lg mb-8 leading-relaxed break-words">
+            <p className="text-gray-300 text-sm md:text-lg mb-8 leading-relaxed wrap-break-words">
                 {recipe.description}
             </p>
 
-            {/* Main Image Container */}
             <div className="w-full mb-3 overflow-hidden rounded-lg bg-[#3A3633]">
                 <img
                     src={recipe.image}
                     alt={recipe.title}
-                    className="w-full h-auto min-h-[200px] max-h-[500px] object-cover block"
+                    className="w-full h-auto min-h-50 max-h-125 object-cover block"
                 />
             </div>
             <p className="text-[10px] md:text-xs text-gray-500 mb-8 italic">
                 A slice of {recipe.title.toLowerCase()} prepared by our chef.
             </p>
 
-            {/* Author Section */}
             <div className="mb-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-[#3E3A37] pb-8">
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center font-bold text-lg overflow-hidden shrink-0">
@@ -119,15 +116,13 @@ export default function RecipeDetailsPage({ params }: { params: Promise<{ id: st
                 <p className="text-[10px] md:text-[11px] text-gray-400 uppercase tracking-tight">{publishDate}</p>
             </div>
 
-            {/* Introduction */}
             <div className="mb-10">
                 <h2 className="text-xl md:text-3xl font-serif text-gray-200 mb-4 tracking-wide">Introduction</h2>
-                <p className="text-gray-300 text-sm md:text-[15px] leading-relaxed break-words">
+                <p className="text-gray-300 text-sm md:text-[15px] leading-relaxed wrap-break-words">
                     This {recipe.title.toLowerCase()} is a timeless classic that combines the tartness of lemons with the sweetness of sugar. Perfect for any occasion.
                 </p>
             </div>
 
-            {/* Ingredients */}
             <div className="mb-10">
                 <h2 className="text-xl md:text-3xl font-serif text-gray-200 mb-5 tracking-wide">Ingredients</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-[#2D2726] p-4 md:p-6 rounded-xl border border-[#3E3A37]">
@@ -139,7 +134,7 @@ export default function RecipeDetailsPage({ params }: { params: Promise<{ id: st
                                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                 </svg>
                             </div>
-                            <span className="text-sm md:text-[15px] text-gray-300 group-hover:text-white transition leading-snug break-words">
+                            <span className="text-sm md:text-[15px] text-gray-300 group-hover:text-white transition leading-snug wrap-break-words">
                                 {item}
                             </span>
                         </label>
@@ -147,7 +142,6 @@ export default function RecipeDetailsPage({ params }: { params: Promise<{ id: st
                 </div>
             </div>
 
-            {/* Instructions */}
             <div className="mb-10">
                 <h2 className="text-xl md:text-3xl font-serif text-gray-200 mb-6 tracking-wide">Instructions</h2>
                 <div className="flex flex-col gap-6">
@@ -156,7 +150,7 @@ export default function RecipeDetailsPage({ params }: { params: Promise<{ id: st
                             <span className="font-serif italic text-[#FCE07A] text-xl md:text-2xl opacity-50 shrink-0">
                                 {idx + 1}
                             </span>
-                            <p className="text-sm md:text-[15px] text-gray-300 leading-relaxed break-words">
+                            <p className="text-sm md:text-[15px] text-gray-300 leading-relaxed wrap-break-words">
                                 {step}
                             </p>
                         </div>
