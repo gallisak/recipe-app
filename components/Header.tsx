@@ -8,7 +8,7 @@ import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Search, Bell, Plus, LogOut, Menu, X } from "lucide-react";
-import logo from "../public/logo.png";
+import logo from "../public/logo.svg";
 import Image from "next/image";
 
 export default function Header() {

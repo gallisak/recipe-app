@@ -9,7 +9,7 @@ import { auth, db, googleAuthProvider } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import logo from "../../../public/logo.png";
+import logo from "../../../public/logo.svg";
 
 const signUpSchema = z.object({
     firstName: z.string().min(2, "First name is too short"),
