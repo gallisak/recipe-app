@@ -8,8 +8,10 @@ import { useRouter } from "next/navigation";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
-import { Plus, Trash2, Upload, ArrowLeft } from "lucide-react";
-import Link from "next/link";
+import { Plus, Trash2, ArrowLeft, Loader2 } from "lucide-react";
+import Button from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import IconButton from "@/components/ui/IconButton";
 
 const recipeSchema = z.object({
     title: z.string().min(3, "Title must be at least 3 characters"),
@@ -84,65 +86,134 @@ export default function EditRecipePage({ params }: { params: Promise<{ id: strin
         }
     };
 
-    if (initialLoading) return <div className="text-white p-10 text-center">Loading recipe data...</div>;
+    if (initialLoading) {
+        return (
+            <div className="flex flex-col items-center justify-center py-20 text-white">
+                <Loader2 className="animate-spin text-[#FCE07A] mb-4" size={40} />
+                <p className="text-gray-400">Loading recipe data...</p>
+            </div>
+        );
+    }
 
     return (
-        <div className="max-w-3xl mx-auto text-white pb-10">
-            <Link href={`/recipes/${id}`} className="inline-flex items-center gap-2 text-gray-400 hover:text-[#FCE07A] transition mb-6">
-                <ArrowLeft size={20} /> Cancel editing
-            </Link>
+        <div className="max-w-3xl mx-auto text-white pb-10 px-4">
+            <Button
+                href={`/recipes/${id}`}
+                variant="ghost"
+                size="sm"
+                icon={<ArrowLeft size={18} />}
+                className="mb-6"
+            >
+                Cancel editing
+            </Button>
 
             <h1 className="text-3xl font-bold mb-8">Edit Recipe</h1>
 
-            <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-8 bg-[#3A3633] p-8 rounded-2xl border border-[#4a4542]">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 bg-[#3A3633] p-6 md:p-8 rounded-2xl border border-[#4a4542]">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="md:col-span-2">
-                        <label className="block text-sm font-semibold mb-2 text-gray-300">Title</label>
-                        <input {...register("title")} className="w-full bg-[#262220] border border-[#4a4542] rounded-xl p-3 outline-none focus:border-[#FCE07A]" />
+                        <Input
+                            label="Title"
+                            error={errors.title?.message}
+                            {...register("title")}
+                        />
                     </div>
                     <div className="md:col-span-2">
                         <label className="block text-sm font-semibold mb-2 text-gray-300">Description</label>
-                        <textarea {...register("description")} rows={3} className="w-full bg-[#262220] border border-[#4a4542] rounded-xl p-3 outline-none focus:border-[#FCE07A]" />
+                        <textarea
+                            {...register("description")}
+                            rows={3}
+                            className={`w-full bg-[#262220] border border-[#4a4542] rounded-xl p-3 outline-none focus:border-[#FCE07A] text-white transition ${errors.description ? "border-red-400" : ""}`}
+                        />
+                        {errors.description && <p className="text-red-400 text-xs mt-1">{errors.description.message}</p>}
                     </div>
                     <div>
                         <label className="block text-sm font-semibold mb-2 text-gray-300">Category</label>
-                        <select {...register("category")} className="w-full bg-[#262220] border border-[#4a4542] rounded-xl p-3 outline-none focus:border-[#FCE07A]">
+                        <select
+                            {...register("category")}
+                            className="w-full bg-[#262220] border border-[#4a4542] rounded-xl p-3 outline-none focus:border-[#FCE07A] text-white transition"
+                        >
                             {categories.map(c => <option key={c} value={c}>{c}</option>)}
                         </select>
+                        {errors.category && <p className="text-red-400 text-xs mt-1">{errors.category.message}</p>}
                     </div>
                     <div>
-                        <label className="block text-sm font-semibold mb-2 text-gray-300">Prep Time</label>
-                        <input type="number" {...register("prepTime")} className="w-full bg-[#262220] border border-[#4a4542] rounded-xl p-3 outline-none focus:border-[#FCE07A]" />
+                        <Input
+                            type="number"
+                            label="Prep Time (mins)"
+                            error={errors.prepTime?.message}
+                            {...register("prepTime")}
+                        />
                     </div>
                 </div>
 
                 <div>
                     <label className="block text-sm font-semibold mb-2 text-gray-300">Ingredients</label>
                     {ingFields.map((field, index) => (
-                        <div key={field.id} className="flex gap-3 mb-3">
-                            <input {...register(`ingredients.${index}.value` as const)} className="flex-1 bg-[#262220] border border-[#4a4542] rounded-xl p-3 outline-none focus:border-[#FCE07A]" />
-                            <button type="button" onClick={() => removeIng(index)} className="p-3 bg-red-500/10 text-red-400 rounded-xl hover:bg-red-500/20"><Trash2 size={20} /></button>
+                        <div key={field.id} className="flex gap-3 mb-3 items-start">
+                            <Input
+                                error={(errors.ingredients as any)?.[index]?.value?.message}
+                                {...register(`ingredients.${index}.value` as const)}
+                            />
+                            <IconButton
+                                type="button"
+                                variant="danger"
+                                icon={<Trash2 size={20} />}
+                                onClick={() => removeIng(index)}
+                                className="mt-1"
+                            />
                         </div>
                     ))}
-                    <button type="button" onClick={() => addIng({ value: "" })} className="text-[#FCE07A] text-sm font-semibold flex items-center gap-1 mt-2 hover:underline"><Plus size={16} /> Add Ingredient</button>
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        icon={<Plus size={16} />}
+                        onClick={() => addIng({ value: "" })}
+                    >
+                        Add Ingredient
+                    </Button>
                 </div>
 
                 <div>
                     <label className="block text-sm font-semibold mb-2 text-gray-300">Instructions</label>
                     {instFields.map((field, index) => (
-                        <div key={field.id} className="flex gap-3 mb-3">
-                            <span className="flex items-center justify-center bg-[#262220] border border-[#4a4542] rounded-xl w-12 h-12.5 font-bold text-gray-400">{index + 1}</span>
-                            <input {...register(`instructions.${index}.value` as const)} className="flex-1 bg-[#262220] border border-[#4a4542] rounded-xl p-3 outline-none focus:border-[#FCE07A]" />
-                            <button type="button" onClick={() => removeInst(index)} className="p-3 bg-red-500/10 text-red-400 rounded-xl hover:bg-red-500/20"><Trash2 size={20} /></button>
+                        <div key={field.id} className="flex gap-3 mb-3 items-start">
+                            <span className="flex items-center justify-center bg-[#262220] border border-[#4a4542] rounded-xl w-12 h-12 font-bold text-gray-400 shrink-0">
+                                {index + 1}
+                            </span>
+                            <Input
+                                error={(errors.instructions as any)?.[index]?.value?.message}
+                                {...register(`instructions.${index}.value` as const)}
+                            />
+                            <IconButton
+                                type="button"
+                                variant="danger"
+                                icon={<Trash2 size={20} />}
+                                onClick={() => removeInst(index)}
+                                className="mt-1"
+                            />
                         </div>
                     ))}
-                    <button type="button" onClick={() => addInst({ value: "" })} className="text-[#FCE07A] text-sm font-semibold flex items-center gap-1 mt-2 hover:underline"><Plus size={16} /> Add Step</button>
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        icon={<Plus size={16} />}
+                        onClick={() => addInst({ value: "" })}
+                    >
+                        Add Step
+                    </Button>
                 </div>
 
                 <div className="pt-4 border-t border-[#4a4542] flex justify-end">
-                    <button disabled={isUpdating} type="submit" className="bg-[#FCE07A] text-black font-bold px-8 py-3 rounded-xl hover:bg-yellow-400 transition disabled:opacity-50">
-                        {isUpdating ? "Saving..." : "Save Changes"}
-                    </button>
+                    <Button
+                        type="submit"
+                        isLoading={isUpdating}
+                        className="px-10"
+                    >
+                        Save Changes
+                    </Button>
                 </div>
             </form>
         </div>
