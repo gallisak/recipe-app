@@ -8,6 +8,8 @@ import RecipeCard, { Recipe } from "@/components/RecipeCard";
 import { ChevronDown, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
+import Button from "@/components/ui/Button";
+
 const cuisines = ["Vegan", "Dessert", "Italian", "Breakfast", "Mexican", "Asian"];
 const difficulties = ["Easy", "Medium", "Hard"];
 const prepTimes = ["Under 15 mins", "15-30 mins", "30-60 mins", "Over 1 hr"];
@@ -96,16 +98,17 @@ export default function RecipesPage() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2 md:gap-3">
-                    <div className="relative flex-1 min-w-30 md:flex-none">
-                        <button
+                    <div className="relative flex-1 min-w-32 md:flex-none">
+                        <Button
+                            variant="secondary"
                             onClick={() => toggleDropdown("cuisine")}
-                            className="w-full flex items-center justify-between gap-2 bg-[#3A3633] px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm border border-[#4a4542] hover:bg-[#4a4542] transition"
+                            className="w-full justify-between"
+                            icon={<ChevronDown size={14} className={`text-gray-400 shrink-0 transition-transform ${openDropdown === "cuisine" ? "rotate-180" : ""}`} />}
                         >
                             <span className="truncate">
                                 {selectedCategories.length === 0 ? "Cuisine" : selectedCategories.length === 1 ? selectedCategories[0] : `Cuisines (${selectedCategories.length})`}
                             </span>
-                            <ChevronDown size={14} className={`text-gray-400 shrink-0 transition-transform ${openDropdown === "cuisine" ? "rotate-180" : ""}`} />
-                        </button>
+                        </Button>
                         {openDropdown === "cuisine" && (
                             <div className="absolute left-0 md:right-0 top-full mt-2 w-40 bg-[#3A3633] border border-[#4a4542] rounded-xl shadow-2xl overflow-hidden z-20">
                                 <button
@@ -128,14 +131,15 @@ export default function RecipesPage() {
                         )}
                     </div>
 
-                    <div className="relative flex-1 min-w-30 md:flex-none">
-                        <button
+                    <div className="relative flex-1 min-w-32 md:flex-none">
+                        <Button
+                            variant="secondary"
                             onClick={() => toggleDropdown("difficulty")}
-                            className="w-full flex items-center justify-between gap-2 bg-[#3A3633] px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm border border-[#4a4542] hover:bg-[#4a4542] transition"
+                            className="w-full justify-between"
+                            icon={<ChevronDown size={14} className={`text-gray-400 shrink-0 transition-transform ${openDropdown === "difficulty" ? "rotate-180" : ""}`} />}
                         >
                             <span className="truncate">{topDifficulty || "Difficulty"}</span>
-                            <ChevronDown size={14} className={`text-gray-400 shrink-0 transition-transform ${openDropdown === "difficulty" ? "rotate-180" : ""}`} />
-                        </button>
+                        </Button>
                         {openDropdown === "difficulty" && (
                             <div className="absolute left-0 md:right-0 top-full mt-2 w-40 bg-[#3A3633] border border-[#4a4542] rounded-xl shadow-lg overflow-hidden z-20">
                                 <button
@@ -157,14 +161,15 @@ export default function RecipesPage() {
                         )}
                     </div>
 
-                    <div className="relative flex-1 min-w-30 md:flex-none">
-                        <button
+                    <div className="relative flex-1 min-w-32 md:flex-none">
+                        <Button
+                            variant="secondary"
                             onClick={() => toggleDropdown("prep")}
-                            className="w-full flex items-center justify-between gap-2 bg-[#3A3633] px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm border border-[#4a4542] hover:bg-[#4a4542] transition"
+                            className="w-full justify-between"
+                            icon={<ChevronDown size={14} className={`text-gray-400 shrink-0 transition-transform ${openDropdown === "prep" ? "rotate-180" : ""}`} />}
                         >
                             <span className="truncate">{prepTime ? prepTime.replace(" mins", "m").replace(" hr", "h") : "Prep Time"}</span>
-                            <ChevronDown size={14} className={`text-gray-400 shrink-0 transition-transform ${openDropdown === "prep" ? "rotate-180" : ""}`} />
-                        </button>
+                        </Button>
                         {openDropdown === "prep" && (
                             <div className="absolute right-0 top-full mt-2 w-48 bg-[#3A3633] border border-[#4a4542] rounded-xl shadow-lg overflow-hidden z-20">
                                 <button
@@ -194,8 +199,11 @@ export default function RecipesPage() {
                     <Loader2 className="animate-spin text-[#FCE07A]" size={40} />
                 </div>
             ) : filteredRecipes.length === 0 ? (
-                <div className="text-center py-20 text-gray-500">
-                    No recipes found matching your filters.
+                <div className="flex flex-col items-center justify-center py-20 bg-[#3A3633]/30 rounded-2xl border border-dashed border-[#4a4542]">
+                    <p className="text-gray-500 mb-4">No recipes found matching your filters.</p>
+                    <Button variant="ghost" size="sm" onClick={() => { setSelectedCategories([]); setPrepTime(""); setTopDifficulty(""); }}>
+                        Clear all filters
+                    </Button>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
