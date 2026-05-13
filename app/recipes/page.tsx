@@ -95,18 +95,19 @@ export default function RecipesPage() {
                     <p className="text-gray-400 text-sm mt-1">{filteredRecipes.length} recipes found</p>
                 </div>
 
-                <div className="flex items-center gap-3">
-
-                    <div className="relative">
+                <div className="flex flex-wrap items-center gap-2 md:gap-3">
+                    <div className="relative flex-1 min-w-30 md:flex-none">
                         <button
                             onClick={() => toggleDropdown("cuisine")}
-                            className="flex items-center gap-2 bg-[#3A3633] px-4 py-2 rounded-xl text-sm border border-[#4a4542] hover:bg-[#4a4542] transition"
+                            className="w-full flex items-center justify-between gap-2 bg-[#3A3633] px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm border border-[#4a4542] hover:bg-[#4a4542] transition"
                         >
-                            {selectedCategories.length === 0 ? "Cuisine" : selectedCategories.length === 1 ? selectedCategories[0] : `Cuisines (${selectedCategories.length})`}
-                            <ChevronDown size={16} className={`text-gray-400 transition-transform ${openDropdown === "cuisine" ? "rotate-180" : ""}`} />
+                            <span className="truncate">
+                                {selectedCategories.length === 0 ? "Cuisine" : selectedCategories.length === 1 ? selectedCategories[0] : `Cuisines (${selectedCategories.length})`}
+                            </span>
+                            <ChevronDown size={14} className={`text-gray-400 shrink-0 transition-transform ${openDropdown === "cuisine" ? "rotate-180" : ""}`} />
                         </button>
                         {openDropdown === "cuisine" && (
-                            <div className="absolute right-0 top-full mt-2 w-40 bg-[#3A3633] border border-[#4a4542] rounded-xl shadow-lg overflow-hidden z-20">
+                            <div className="absolute left-0 md:right-0 top-full mt-2 w-40 bg-[#3A3633] border border-[#4a4542] rounded-xl shadow-lg overflow-hidden z-20">
                                 <button
                                     onClick={() => { setSelectedCategories([]); setOpenDropdown(null); }}
                                     className={`w-full text-left px-4 py-2.5 text-sm transition hover:bg-[#4a4542] ${selectedCategories.length === 0 ? "text-[#FCE07A] font-bold" : "text-gray-300"}`}
@@ -127,16 +128,16 @@ export default function RecipesPage() {
                         )}
                     </div>
 
-                    <div className="relative">
+                    <div className="relative flex-1 min-w-30 md:flex-none">
                         <button
                             onClick={() => toggleDropdown("difficulty")}
-                            className="flex items-center gap-2 bg-[#3A3633] px-4 py-2 rounded-xl text-sm border border-[#4a4542] hover:bg-[#4a4542] transition"
+                            className="w-full flex items-center justify-between gap-2 bg-[#3A3633] px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm border border-[#4a4542] hover:bg-[#4a4542] transition"
                         >
-                            {topDifficulty || "Difficulty"}
-                            <ChevronDown size={16} className={`text-gray-400 transition-transform ${openDropdown === "difficulty" ? "rotate-180" : ""}`} />
+                            <span className="truncate">{topDifficulty || "Difficulty"}</span>
+                            <ChevronDown size={14} className={`text-gray-400 shrink-0 transition-transform ${openDropdown === "difficulty" ? "rotate-180" : ""}`} />
                         </button>
                         {openDropdown === "difficulty" && (
-                            <div className="absolute right-0 top-full mt-2 w-40 bg-[#3A3633] border border-[#4a4542] rounded-xl shadow-lg overflow-hidden z-20">
+                            <div className="absolute left-0 md:right-0 top-full mt-2 w-40 bg-[#3A3633] border border-[#4a4542] rounded-xl shadow-lg overflow-hidden z-20">
                                 <button
                                     onClick={() => { setTopDifficulty(""); setOpenDropdown(null); }}
                                     className={`w-full text-left px-4 py-2.5 text-sm transition hover:bg-[#4a4542] ${topDifficulty === "" ? "text-[#FCE07A] font-bold" : "text-gray-400"}`}
@@ -156,13 +157,13 @@ export default function RecipesPage() {
                         )}
                     </div>
 
-                    <div className="relative">
+                    <div className="relative flex-1 min-w-30 md:flex-none">
                         <button
                             onClick={() => toggleDropdown("prep")}
-                            className="flex items-center gap-2 bg-[#3A3633] px-4 py-2 rounded-xl text-sm border border-[#4a4542] hover:bg-[#4a4542] transition"
+                            className="w-full flex items-center justify-between gap-2 bg-[#3A3633] px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm border border-[#4a4542] hover:bg-[#4a4542] transition"
                         >
-                            {prepTime ? prepTime.replace(" mins", "m").replace(" hr", "h") : "Prep Time"}
-                            <ChevronDown size={16} className={`text-gray-400 transition-transform ${openDropdown === "prep" ? "rotate-180" : ""}`} />
+                            <span className="truncate">{prepTime ? prepTime.replace(" mins", "m").replace(" hr", "h") : "Prep Time"}</span>
+                            <ChevronDown size={14} className={`text-gray-400 shrink-0 transition-transform ${openDropdown === "prep" ? "rotate-180" : ""}`} />
                         </button>
                         {openDropdown === "prep" && (
                             <div className="absolute right-0 top-full mt-2 w-48 bg-[#3A3633] border border-[#4a4542] rounded-xl shadow-lg overflow-hidden z-20">
@@ -185,7 +186,6 @@ export default function RecipesPage() {
                             </div>
                         )}
                     </div>
-
                 </div>
             </div>
 
