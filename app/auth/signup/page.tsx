@@ -2,7 +2,6 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db, googleAuthProvider } from "@/lib/firebase";
@@ -12,19 +11,7 @@ import Image from "next/image";
 import logo from "../../../public/logo.svg";
 import Button from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-
-const signUpSchema = z.object({
-    firstName: z.string().min(2, "First name is too short"),
-    lastName: z.string().min(2, "Last name is too short"),
-    email: z.string().email("Invalid email address"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
-    confirmPassword: z.string()
-}).refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-});
-
-type SignUpForm = z.infer<typeof signUpSchema>;
+import { signUpSchema, SignUpForm } from "@/lib/schemas";
 
 export default function SignUp() {
     const router = useRouter();

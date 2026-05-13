@@ -6,25 +6,12 @@ import { db } from "@/lib/firebase";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
-
-interface FullRecipe {
-    id: string;
-    title: string;
-    description: string;
-    category: string;
-    prepTime: number;
-    rating: number;
-    image: string;
-    author: string;
-    ingredients: string[];
-    instructions: string[];
-    createdAt: any;
-}
+import { Recipe } from "@/types/recipe";
 
 export default function RecipeDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
 
-    const [recipe, setRecipe] = useState<FullRecipe | null>(null);
+    const [recipe, setRecipe] = useState<Recipe | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -34,7 +21,7 @@ export default function RecipeDetailsPage({ params }: { params: Promise<{ id: st
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
-                    setRecipe({ id: docSnap.id, ...docSnap.data() } as FullRecipe);
+                    setRecipe({ id: docSnap.id, ...docSnap.data() } as Recipe);
                 } else {
                     console.error("No such document!");
                 }

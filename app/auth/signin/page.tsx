@@ -2,7 +2,6 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, googleAuthProvider, db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
@@ -12,13 +11,7 @@ import logo from "../../../public/logo.svg";
 import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 import Button from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-
-const signInSchema = z.object({
-    email: z.string().email("Invalid email address"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
-});
-
-type SignInForm = z.infer<typeof signInSchema>;
+import { signInSchema, SignInForm } from "@/lib/schemas";
 
 export default function SignIn() {
     const router = useRouter();

@@ -4,12 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
-
-interface UserProfile {
-    firstName: string;
-    lastName: string;
-    email: string;
-}
+import { UserProfile } from "@/types/user";
 
 interface AuthContextType {
     user: User | null;

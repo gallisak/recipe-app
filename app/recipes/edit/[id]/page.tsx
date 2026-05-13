@@ -3,7 +3,6 @@
 import { useEffect, useState, use } from "react";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { useRouter } from "next/navigation";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -12,17 +11,8 @@ import { Plus, Trash2, ArrowLeft, Loader2 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import IconButton from "@/components/ui/IconButton";
+import { editRecipeSchema as recipeSchema, EditRecipeForm as RecipeForm } from "@/lib/schemas";
 
-const recipeSchema = z.object({
-    title: z.string().min(3, "Title must be at least 3 characters"),
-    description: z.string().min(10, "Description is too short"),
-    category: z.string().min(1, "Select a category"),
-    prepTime: z.coerce.number().min(1, "Prep time must be at least 1 minute"),
-    ingredients: z.array(z.object({ value: z.string().min(1, "Required") })),
-    instructions: z.array(z.object({ value: z.string().min(1, "Required") })),
-});
-
-type RecipeForm = z.infer<typeof recipeSchema>;
 const categories = ["Vegan", "Dessert", "Italian", "Breakfast", "Mexican", "Asian"];
 
 export default function EditRecipePage({ params }: { params: Promise<{ id: string }> }) {

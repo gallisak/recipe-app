@@ -9,17 +9,7 @@ import { db } from "@/lib/firebase";
 import IconButton from "./ui/IconButton";
 import Card from "./ui/Card";
 import Badge from "./ui/Badge";
-
-export interface Recipe {
-    id: string;
-    title: string;
-    description: string;
-    category: string;
-    prepTime: number;
-    rating: number;
-    image: string;
-    userId: string;
-}
+import { Recipe } from "@/types/recipe";
 
 export default function RecipeCard({ recipe, isFavorite }: { recipe: Recipe, isFavorite: boolean }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
